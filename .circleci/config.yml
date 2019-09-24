@@ -32,4 +32,4 @@ workflows:
       - print-changed-service:
           filters:
             branches:
-              only: develop
+              only: master
