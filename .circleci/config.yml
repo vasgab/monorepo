@@ -16,6 +16,8 @@ commands:
             echo "path to search: " $PATHS_TO_SEARCH
             echo "latest commit in path: " $LATEST_COMMIT_IN_PATH
             echo "latest commit " $LATEST_COMMIT
+            echo ${HOME}
+            echo ${CIRCLE_WORKING_DIRECTORY}
 
 jobs:
   print-changed-service:
