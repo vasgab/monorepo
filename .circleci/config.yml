@@ -1,0 +1,35 @@
+version: 2.1
+
+executors:
+  cloud-sdk:
+    docker:
+      - image: google/cloud-sdk
+
+commands:
+  print:
+    steps:
+      - run:
+          command: |
+            PATHS_TO_SEARCH="$*"
+            LATEST_COMMIT=$(git rev-parse HEAD)
+            LATEST_COMMIT_IN_PATH=$(git log -1 --format=format:%H --full-diff $PATHS_TO_SEARCH)
+            echo "path to search: "$PATHS_TO_SEARCH
+            echo "latest commit in path: " $LATEST_COMMIT_IN_PATH
+            echo "latest commit " $LATEST_COMMIT
+
+jobs:
+  print-changed-service:
+    executor: cloud-sdk
+    steps:
+      - checkout
+      - print 
+        
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - print-changed-service:
+          filters:
+            branches:
+              only: develop
