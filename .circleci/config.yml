@@ -29,14 +29,7 @@ commands:
 
             echo "LATEST_COMMIT: " $LATEST_COMMIT
             echo "FOLDER_COMMIT: " $FOLDER_COMMIT
-
-            if [ "$FOLDER_COMMIT" = "$LATEST_COMMIT" ];
-            then
-                echo "a change was made in this folder";
-            else
-                echo "a change was NOT made in this folder";
-                circleci-agent step halt
-            fi
+      - run: circleci-agent step halt
 
 
 jobs:
