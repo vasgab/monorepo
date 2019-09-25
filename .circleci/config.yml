@@ -9,6 +9,8 @@ commands:
   print:
     steps:
       - run:
+          command: chmod +x .circleci/check_commit_in_folder.sh
+      - run:
           command: |
             .circleci/check_commit_in_folder.sh Folder-1
 
