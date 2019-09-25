@@ -35,7 +35,7 @@ commands:
                 echo "a change was made in this folder";
             else
                 echo "a change was NOT made in this folder";
-                circleci step halt
+                circleci-agent step halt
             fi
 
 
