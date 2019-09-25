@@ -15,7 +15,7 @@ commands:
     steps:
       - run:
           name: Export env vars for substitution. $BASH_ENV is sourced before each step
-          command: |sip
+          command: |
             echo 'export FOLDER="<< parameters.folder >>"' >> $BASH_ENV
             source $BASH_ENV
       - run:
