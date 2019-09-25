@@ -8,9 +8,9 @@ FOLDER_COMMIT=$(git log -1 --format=format:%H --full-diff $1)
 echo "LATEST_COMMIT: "$LATEST_COMMIT
 echo "FOLDER_COMMIT: " $FOLDER_COMMIT
 
-if [$FOLDER_COMMIT =! $LATEST_COMMIT];
-  then
-    exit 0;
+if [$FOLDER_COMMIT = $LATEST_COMMIT];
+then
+    true;
 else
-  exit 1;
+  false;
 fi

@@ -26,10 +26,10 @@ commands:
             echo "folder " ${FOLDER}
             if [ .circleci/check_commit_in_folder.sh ${FOLDER} ];
               then
+                echo "the job continues for " ${FOLDER}
+            else
                 echo "Exiting this CircleCI job because code in ${FOLDER} have not changed"
                 circleci step halt
-            else
-                  echo "the job continues for " ${FOLDER}
             fi
 
 
