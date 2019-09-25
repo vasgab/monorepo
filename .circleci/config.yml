@@ -38,9 +38,6 @@ jobs:
       - checkout
       - build_service
           folder: "Folder-1"
-      - build_service
-          folder: "Folder-2"
-
 
 workflows:
   version: 2
