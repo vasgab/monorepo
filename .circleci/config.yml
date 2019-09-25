@@ -11,7 +11,15 @@ commands:
       - run:
           command: chmod +x .circleci/check_commit_in_folder.sh
       - run:
-          command: .circleci/check_commit_in_folder.sh Folder-1
+          command: |
+            if [ .circleci/check_commit_in_folder.sh Folder-1 ];
+              then
+                echo "Exiting this CircleCI job because code in the following paths have not changed:"
+                circleci step halt
+            else
+                  echo "the job continues"
+            fi
+
 
 jobs:
   print-changed-service:
