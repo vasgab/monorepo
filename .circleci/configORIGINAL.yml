@@ -24,17 +24,12 @@ commands:
           name: checking if commit was done in
           command: |
             echo "folder " ${FOLDER}
-            LATEST_COMMIT=$(git rev-parse HEAD)
-            FOLDER_COMMIT=$(git log -1 --format=format:%H --full-diff ${FOLDER})
-
-            echo "LATEST_COMMIT: " $LATEST_COMMIT
-            echo "FOLDER_COMMIT: " $FOLDER_COMMIT
-
-            if [ "$FOLDER_COMMIT" = "$LATEST_COMMIT" ];
-            then
-                echo "a change was made in this folder";
+            if [ .circleci/check_commit_in_folder.sh ${FOLDER} ];
+              then
+                echo "the job continues for " ${FOLDER}
             else
-                echo "a change was NOT made in this folder";
+                echo "Exiting this CircleCI job because code in ${FOLDER} have not changed"
+                circleci step halt
             fi
 
 
