@@ -1,4 +1,3 @@
-set -e
 
 echo "Folder to check: $1"
 
