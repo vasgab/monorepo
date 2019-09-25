@@ -9,14 +9,14 @@ commands:
   build_service:
     description: "Build/push image to GCR"
     parameters:
-      folder:
+      folder_name:
         type: string
         default: "Folder-1"
     steps:
       - run:
           name: Export env vars for substitution. $BASH_ENV is sourced before each step
           command: |
-            echo 'export FOLDER="<< parameters.folder >>"' >> $BASH_ENV
+            echo 'export FOLDER="<< parameters.folder_name >>"' >> $BASH_ENV
             source $BASH_ENV
       - run:
           command: chmod +x .circleci/check_commit_in_folder.sh
@@ -37,7 +37,7 @@ jobs:
     steps:
       - checkout
       - build_service
-          folder: "Folder-1"
+          folder_name: Folder-1
 
 workflows:
   version: 2
