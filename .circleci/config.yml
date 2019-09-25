@@ -13,11 +13,11 @@ commands:
         type: string
         default: "Folder-1"
     steps:
-        - run:
-            name: Export env vars for substitution. $BASH_ENV is sourced before each step
-            command: |sip
-              echo 'export FOLDER="<< parameters.folder >>"' >> $BASH_ENV
-              source $BASH_ENV
+      - run:
+          name: Export env vars for substitution. $BASH_ENV is sourced before each step
+          command: |sip
+            echo 'export FOLDER="<< parameters.folder >>"' >> $BASH_ENV
+            source $BASH_ENV
       - run:
           command: chmod +x .circleci/check_commit_in_folder.sh
       - run:
