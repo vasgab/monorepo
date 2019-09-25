@@ -6,34 +6,47 @@ executors:
       - image: google/cloud-sdk
 
 commands:
-  print:
+  build_service:
+    description: "Build/push image to GCR"
+    parameters:
+      folder:
+        type: string
+        default: "Folder-1"
     steps:
+        - run:
+            name: Export env vars for substitution. $BASH_ENV is sourced before each step
+            command: |sip
+              echo 'export FOLDER="<< parameters.folder >>"' >> $BASH_ENV
+              source $BASH_ENV
       - run:
           command: chmod +x .circleci/check_commit_in_folder.sh
       - run:
           command: |
-            if [ .circleci/check_commit_in_folder.sh Folder-1 ];
+            if [ .circleci/check_commit_in_folder.sh ${FOLDER} ];
               then
-                echo "Exiting this CircleCI job because code in the following paths have not changed:"
+                echo "Exiting this CircleCI job because code in ${FOLDER} have not changed"
                 circleci step halt
             else
-                  echo "the job continues"
+                  echo "the job continues for " ${FOLDER}
             fi
 
 
 jobs:
-  print-changed-service:
+  build-deploy-dev:
     executor: cloud-sdk
     steps:
       - checkout
-      - print
+      - build_service
+        folder: "Folder-1"
+      - build_service
+        folder: "Folder-2"
 
 
 workflows:
   version: 2
   build-deploy:
     jobs:
-      - print-changed-service:
+      - build-deploy-dev:
           filters:
             branches:
               only: develop
