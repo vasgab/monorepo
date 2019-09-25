@@ -21,7 +21,9 @@ commands:
       - run:
           command: chmod +x .circleci/check_commit_in_folder.sh
       - run:
+          name: checking if commit was done in
           command: |
+            echo "folder " ${FOLDER}
             if [ .circleci/check_commit_in_folder.sh ${FOLDER} ];
               then
                 echo "Exiting this CircleCI job because code in ${FOLDER} have not changed"
