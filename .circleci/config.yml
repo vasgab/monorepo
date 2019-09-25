@@ -10,20 +10,20 @@ commands:
     steps:
       - run:
           command: |
-            PATHS_TO_SEARCH="$*"
             LATEST_COMMIT=$(git rev-parse HEAD)
-            LATEST_COMMIT_IN_PATH=$(git log -1 --format=format:%H --full-diff $PATHS_TO_SEARCH)
-            echo "path to search: "$PATHS_TO_SEARCH
-            echo "latest commit in path: " $LATEST_COMMIT_IN_PATH
-            echo "latest commit " $LATEST_COMMIT
+            FOLDER1_COMMIT=$(git log -1 --format=format:%H --full-diff ../Folder-1)
+            FOLDER2_COMMIT=$(git log -1 --format=format:%H --full-diff ../Folder-2)
+            echo "LATEST_COMMIT: "$LATEST_COMMIT
+            echo "FOLDER1_COMMIT: " $FOLDER1_COMMIT
+            echo "FOLDER2_COMMIT " $FOLDER2_COMMIT
 
 jobs:
   print-changed-service:
     executor: cloud-sdk
     steps:
       - checkout
-      - print 
-        
+      - print
+
 
 workflows:
   version: 2
