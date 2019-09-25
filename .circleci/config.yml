@@ -50,7 +50,7 @@ jobs:
           folder_name: "Folder-2"
 
 workflows:
-  version: 2
+  version: 2.1
   build-deploy:
     jobs:
       - build-deploy-dev:
