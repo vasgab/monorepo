@@ -37,9 +37,9 @@ jobs:
     steps:
       - checkout
       - build_service
-        folder: "Folder-1"
+          folder: "Folder-1"
       - build_service
-        folder: "Folder-2"
+          folder: "Folder-2"
 
 
 workflows:
