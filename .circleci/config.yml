@@ -36,8 +36,10 @@ jobs:
     executor: cloud-sdk
     steps:
       - checkout
-      - build_service
-          folder_name: Folder-1
+      - build_service:
+          folder_name: "Folder-1"
+      - build_service:
+          folder_name: "Folder-2"
 
 workflows:
   version: 2
