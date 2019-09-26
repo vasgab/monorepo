@@ -7,7 +7,7 @@ executors:
 
 commands:
   build_service:
-    description: "Build/push image to GCR"
+    description: "Build"
     parameters:
       folder_name:
         type: string
@@ -35,15 +35,8 @@ commands:
           command: |
             if [[ $LATEST_COMMIT = $FOLDER_COMMIT ]]; 
             then
-              echo "this folder ${FOLDER} was updated"
-              echo "export ${FOLDER}" >> folders.txt
-              cat folders.txt >> $BASH_ENV
+              echo "this folder ${FOLDER} was updated, add build code in this section"
             fi
-
-      - persist_to_workspace:
-          root: .
-          paths:
-              - . 
 
 
 jobs:
@@ -55,6 +48,7 @@ jobs:
           folder_name: "Folder-1"
       - build_service:
           folder_name: "Folder-2"
+  
 
 workflows:
   version: 2
