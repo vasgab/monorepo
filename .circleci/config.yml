@@ -33,7 +33,7 @@ commands:
       - run:
           name: store folders with changes in the last commit
           command: |
-            if [[ "$LATEST_COMMIT" = "$FOLDER_COMMIT"]]; 
+            if [[ $LATEST_COMMIT = $FOLDER_COMMIT ]]; 
             then
               echo "this folder ${FOLDER} was updated"
               cat folders.txt >> $BASH_ENV
