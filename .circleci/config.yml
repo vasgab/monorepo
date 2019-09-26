@@ -36,7 +36,13 @@ commands:
             if [[ $LATEST_COMMIT = $FOLDER_COMMIT ]]; 
             then
               echo "this folder ${FOLDER} was updated, add build code in this section"
+              echo "crear el archivo con el nombre del parametro folder_name"
+              echo "autenticacion.txt, tag"
+            else
+              echo "no need to deploy"
             fi
+  deploy_service:
+    description: "deploy service"
 
 
 jobs:
@@ -45,9 +51,31 @@ jobs:
     steps:
       - checkout
       - build_service:
-          folder_name: "Folder-1"
+          folder_name: "autenticacion" 
+          env: "dev"         
       - build_service:
-          folder_name: "Folder-2"
+          folder_name: "clientes"
+          env: "dev"         
+      - build_service:
+          folder_name: "piscinas"
+          env: "dev"         
+      - deploy_service:
+          env: "dev"         
+  build-deploy-qa:
+    executor: cloud-sdk
+    steps:
+      - checkout
+      - build_service:
+          folder_name: "autenticacion" 
+          env: "qa"         
+      - build_service:
+          folder_name: "clientes"
+          env: "qa"         
+      - build_service:
+          folder_name: "piscinas"
+          env: "qa"         
+      - deploy_service:
+          env: "qa"         
   
 
 workflows:
@@ -58,3 +86,7 @@ workflows:
           filters:
             branches:
               only: develop
+      - build-deploy-qa:
+          filters:
+            branches:
+              only: qa
