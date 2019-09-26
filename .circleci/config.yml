@@ -52,9 +52,14 @@ commands:
       - attach_workspace:
           at: .
       - run: retrive modified folders
-          FILE=
+          FILE=autenticacion.txt
           if test -f "$FILE"; then
-            echo "$FILE exist"
+            echo "run deploy for autenticacion"
+          fi
+      - run: retrive modified folders
+          FILE=clientes.txt
+          if test -f "$FILE"; then
+            echo "run deploy for clientes"
           fi
 
 jobs:
