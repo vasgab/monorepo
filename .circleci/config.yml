@@ -33,17 +33,29 @@ commands:
       - run:
           name: store folders with changes in the last commit
           command: |
-            if [[ $LATEST_COMMIT = $FOLDER_COMMIT ]]; 
+            if [[ $LATEST_COMMIT = $FOLDER_COMMIT ]];
             then
               echo "this folder ${FOLDER} was updated, add build code in this section"
-              echo "crear el archivo con el nombre del parametro folder_name"
-              echo "autenticacion.txt, tag"
+              cat service_name.txt >> $BASH_ENV
+              echo "export ${FOLDER}" >> ${FOLDER}.txt
             else
               echo "no need to deploy"
             fi
+      - persist_to_workspace:
+          root: .
+          paths:
+              - .
+
   deploy_service:
     description: "deploy service"
-
+    steps:
+      - attach_workspace:
+          at: .
+      - run: retrive modified folders
+          FILE=
+          if test -f "$FILE"; then
+            echo "$FILE exist"
+          fi
 
 jobs:
   build-deploy-dev:
@@ -51,32 +63,31 @@ jobs:
     steps:
       - checkout
       - build_service:
-          folder_name: "autenticacion" 
-          env: "dev"         
+          folder_name: "autenticacion"
+          env: "dev"
       - build_service:
           folder_name: "clientes"
-          env: "dev"         
+          env: "dev"
       - build_service:
           folder_name: "piscinas"
-          env: "dev"         
+          env: "dev"
       - deploy_service:
-          env: "dev"         
+          env: "dev"
   build-deploy-qa:
     executor: cloud-sdk
     steps:
       - checkout
       - build_service:
-          folder_name: "autenticacion" 
-          env: "qa"         
+          folder_name: "autenticacion"
+          env: "qa"
       - build_service:
           folder_name: "clientes"
-          env: "qa"         
+          env: "qa"
       - build_service:
           folder_name: "piscinas"
-          env: "qa"         
+          env: "qa"
       - deploy_service:
-          env: "qa"         
-  
+          env: "qa"
 
 workflows:
   version: 2
