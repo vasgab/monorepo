@@ -36,10 +36,8 @@ commands:
             if [[ $LATEST_COMMIT = $FOLDER_COMMIT ]]; 
             then
               echo "this folder ${FOLDER} was updated"
+              echo "export ${FOLDER}" >> folders.txt
               cat folders.txt >> $BASH_ENV
-              #storing the current docker image tag value 
-              echo "export FOLDER=${FOLDER}" >> folder.txt
-              cat folder.txt >> $BASH_ENV                    
             fi
 
       - persist_to_workspace:
