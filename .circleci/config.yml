@@ -56,7 +56,6 @@ jobs:
   build-deploy-dev:
     executor: cloud-sdk
     steps:
-      - checkout
       - build_and_deploy_service:
           folder_name: "autenticacion"
           env: "dev"
