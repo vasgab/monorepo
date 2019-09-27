@@ -24,16 +24,12 @@ commands:
             echo 'export ENV="<< parameters.env >>"' >> $BASH_ENV
             source $BASH_ENV
       - run:
-          name: retrive last commit and last commit in folder
+          name: build
           command: |
             echo "folder " ${FOLDER}
             LATEST_COMMIT=$(git rev-parse HEAD)
             FOLDER_COMMIT=$(git log -1 --format=format:%H --full-diff ${FOLDER})
-            echo 'export LATEST_COMMIT="${LATEST_COMMIT}"' >> $BASH_ENV
-            echo 'export FOLDER_COMMIT="${FOLDER_COMMIT}"' >> $BASH_ENV
-      - run:
-          name: build
-          command: |
+
             echo "LATEST_COMMIT: " $LATEST_COMMIT
             echo "FOLDER_COMMIT: " $FOLDER_COMMIT
             if [[ $LATEST_COMMIT = $FOLDER_COMMIT ]];
