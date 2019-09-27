@@ -27,6 +27,7 @@ commands:
           name: build
           command: |
             echo "folder " ${FOLDER}
+            echo "folder " ${ENV}
             LATEST_COMMIT=$(git rev-parse HEAD)
             FOLDER_COMMIT=$(git log -1 --format=format:%H --full-diff ${FOLDER})
 
@@ -41,9 +42,17 @@ commands:
       - run:
           name: deploy
           command: |
+            echo "folder " ${FOLDER}
+            LATEST_COMMIT=$(git rev-parse HEAD)
+            FOLDER_COMMIT=$(git log -1 --format=format:%H --full-diff ${FOLDER})
+
+            echo "LATEST_COMMIT: " $LATEST_COMMIT
+            echo "FOLDER_COMMIT: " $FOLDER_COMMIT
             if [[ $LATEST_COMMIT = $FOLDER_COMMIT ]];
             then
-              echo "this service ${FOLDER} was built, add deploy code in this section"
+              echo "this folder ${FOLDER} was built, add deploy code in this section"
+            else
+              echo "no need to deploy"
             fi
 
 jobs:
