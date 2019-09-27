@@ -27,7 +27,7 @@ commands:
           name: setting working directory and checking it out
           command: |
             checkout:
-              path: /${FOLDER}
+              path: ~/"${FOLDER}"
       - run:
           name: retrive last commit and last commit in folder
           command: |
