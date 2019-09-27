@@ -26,7 +26,6 @@ commands:
           name: setting working directory and checking it out
           command: |
             working_directory: /${FOLDER}
-            echo "working directory: " $working_directory
             checkout
               path: ~/${FOLDER}
       - run:
