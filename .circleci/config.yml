@@ -24,7 +24,7 @@ commands:
             echo 'export ENV="<< parameters.env >>"' >> $BASH_ENV
             source $BASH_ENV
       - checkout:
-          path: ~/"${FOLDER}"
+          path: ~/${FOLDER}
       - run:
           name: retrive last commit and last commit in folder
           command: |
