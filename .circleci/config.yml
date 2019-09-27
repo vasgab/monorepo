@@ -61,15 +61,12 @@ jobs:
     steps:
       - checkout
       - build_and_deploy_service:
-          working_directory: /autenticacion
           folder_name: "autenticacion"
           env: "dev"
       - build_and_deploy_service:
-          working_directory: /clientes
           folder_name: "clientes"
           env: "dev"
       - build_and_deploy_service:
-          working_directory: /piscinas
           folder_name: "piscinas"
           env: "dev"
 
