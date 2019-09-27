@@ -23,8 +23,6 @@ commands:
             echo 'export FOLDER="<< parameters.folder_name >>"' >> $BASH_ENV
             echo 'export ENV="<< parameters.env >>"' >> $BASH_ENV
             source $BASH_ENV
-      - checkout:
-          path: ~/${FOLDER}
       - run:
           name: retrive last commit and last commit in folder
           command: |
@@ -56,6 +54,7 @@ jobs:
   build-deploy-dev:
     executor: cloud-sdk
     steps:
+      - checkout
       - build_and_deploy_service:
           folder_name: "autenticacion"
           env: "dev"
