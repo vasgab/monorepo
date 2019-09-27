@@ -6,22 +6,31 @@ executors:
       - image: google/cloud-sdk
 
 commands:
-  build_service:
-    description: "Build"
+  build_and_deploy_service:
+    description: "Build and deploy service"
     parameters:
       folder_name:
         type: string
-        default: "Folder-1"
+        default: "autenticacion"
+      env:
+        type: string
+        default: "dev"
     steps:
       - run:
           name: Export env vars for substitution. $BASH_ENV is sourced before each step
           command: |
             echo 'export FOLDER="<< parameters.folder_name >>"' >> $BASH_ENV
+            echo 'export ENV="<< parameters.env >>"' >> $BASH_ENV
             source $BASH_ENV
       - run:
-          command: chmod +x .circleci/check_commit_in_folder.sh
+          name: setting working directory and checking it out
+          command: |
+            working_directory: ~/${FOLDER}
+            echo "working directory: working_directory"
+            checkout
+              path: ~/${FOLDER}
       - run:
-          name: checking if commit was done in
+          name: retrive last commit and last commit in folder
           command: |
             echo "folder " ${FOLDER}
             LATEST_COMMIT=$(git rev-parse HEAD)
@@ -31,68 +40,50 @@ commands:
             echo "FOLDER_COMMIT: " $FOLDER_COMMIT
 
       - run:
-          name: store folders with changes in the last commit
+          name: build
           command: |
             if [[ $LATEST_COMMIT = $FOLDER_COMMIT ]];
             then
               echo "this folder ${FOLDER} was updated, add build code in this section"
-              cat service_name.txt >> $BASH_ENV
-              echo "export ${FOLDER}" >> ${FOLDER}.txt
             else
               echo "no need to deploy"
             fi
-      - persist_to_workspace:
-          root: .
-          paths:
-              - .
-
-  deploy_service:
-    description: "deploy service"
-    steps:
-      - attach_workspace:
-          at: .
-      - run: retrive modified folders
-          FILE=autenticacion.txt
-          if test -f "$FILE"; then
-            echo "run deploy for autenticacion"
-          fi
-      - run: retrive modified folders
-          FILE=clientes.txt
-          if test -f "$FILE"; then
-            echo "run deploy for clientes"
-          fi
+      - run:
+          name: deploy
+          command: |
+            if [[ $LATEST_COMMIT = $FOLDER_COMMIT ]];
+            then
+              echo "this service ${FOLDER} was built, add deploy code in this section"
+            fi
 
 jobs:
   build-deploy-dev:
     executor: cloud-sdk
     steps:
       - checkout
-      - build_service:
+      - build_and_deploy_service:
           folder_name: "autenticacion"
           env: "dev"
-      - build_service:
+      - build_and_deploy_service:
           folder_name: "clientes"
           env: "dev"
-      - build_service:
+      - build_and_deploy_service:
           folder_name: "piscinas"
           env: "dev"
-      - deploy_service:
-          env: "dev"
-  build-deploy-qa:
+
+  build-deploy-master:
     executor: cloud-sdk
     steps:
       - checkout
-      - build_service:
+      - build_and_deploy_service:
           folder_name: "autenticacion"
-          env: "qa"
-      - build_service:
+          env: "prod"
+      - build_and_deploy_service:
           folder_name: "clientes"
-          env: "qa"
-      - build_service:
+          env: "prod"
+      - build_and_deploy_service:
           folder_name: "piscinas"
-          env: "qa"
-      - deploy_service:
-          env: "qa"
+          env: "prod"
 
 workflows:
   version: 2
@@ -102,7 +93,7 @@ workflows:
           filters:
             branches:
               only: develop
-      - build-deploy-qa:
+      - build-deploy-master:
           filters:
             branches:
-              only: qa
+              only: master
