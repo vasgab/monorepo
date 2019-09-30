@@ -1,12 +1,10 @@
 version: 2.1
 
 executors:
-  cloud-sdk:
-    docker:
-      - image: google/cloud-sdk
   aws-cli:
     docker:
       - image: google/cloud-sdk
+    working_directory: /tmp
 
 commands:
   bds:
@@ -40,7 +38,7 @@ commands:
             then
               echo "this folder ${SERVICE} was updated, add build code in this section"
               echo IMAGE-${SERVICE}=333.ecr.aws:IMAGE-${SERVICE} > workspace/services-images
-              echo cat /workspace/services-images
+              echo cat /temp/workspace/services-images
             else
               echo "DO NOT BUILD"
             fi
@@ -77,7 +75,7 @@ commands:
         default: "dev"
     steps:
       - attach_workspace:
-          at: /workspace/services-images
+          at: /temp/workspace
       - run:
           name: EXPORT-deploy-vars-<< parameters.service_name >>
           command: |
@@ -90,7 +88,7 @@ commands:
             echo "DEPLOY Service: "<< parameters.service_name >>
             ls -l
             pwd
-            echo cat /workspace/services-images
+            echo cat /temp/workspace/services-images
             echo "Entorno: " $ENV
 
 
