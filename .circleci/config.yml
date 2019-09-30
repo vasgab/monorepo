@@ -23,7 +23,7 @@ commands:
       - attach_workspace:
           at: workspace/
       - run:
-          name: EXPORT-vars-<< parameters.service_name >>
+          name: EXPORT-build-vars-<< parameters.service_name >>
           command: |
             echo 'export SERVICE="<< parameters.service_name >>"' >> $BASH_ENV
             echo 'export ENV="<< parameters.env >>"' >> $BASH_ENV
@@ -81,7 +81,7 @@ commands:
       - attach_workspace:
           at: workspace/
       - run:
-          name: EXPORT-vars-<< parameters.service_name >>
+          name: EXPORT-deploy-vars-<< parameters.service_name >>
           command: |
             echo 'export SERVICE="<< parameters.service_name >>"' >> $BASH_ENV
             echo 'export ENV="<< parameters.env >>"' >> $BASH_ENV
