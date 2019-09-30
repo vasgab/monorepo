@@ -17,6 +17,8 @@ commands:
         default: "dev"
 
     steps:
+      - attach_workspace:
+          at: .
       - run:
           name: EXPORT-build-vars-<< parameters.service_name >>
           command: |
