@@ -20,8 +20,6 @@ commands:
         default: "dev"
 
     steps:
-      - attach_workspace:
-          at: workspace/
       - run:
           name: EXPORT-build-vars-<< parameters.service_name >>
           command: |
@@ -41,15 +39,15 @@ commands:
             if [[ $LATEST_COMMIT = $FOLDER_COMMIT ]];
             then
               echo "this folder ${SERVICE} was updated, add build code in this section"
-              echo IMAGE-${SERVICE}=333.ecr.aws:IMAGE-${SERVICE}> workspace/${SERVICE}.image
-              echo workspace/${SERVICE}.image
+              echo IMAGE-${SERVICE}=333.ecr.aws:IMAGE-${SERVICE}> workspace/services-images
+              echo workspace/services-images
             else
               echo "DO NOT BUILD"
             fi
       - persist_to_workspace:
-          root: .
+          root: workspace
           paths:
-              - workspace/
+              - services-images
 
       # - run:
       #     name: DEPLOY-<< parameters.service_name >>
@@ -79,7 +77,7 @@ commands:
         default: "dev"
     steps:
       - attach_workspace:
-          at: workspace/
+          at: /workspace/services-images
       - run:
           name: EXPORT-deploy-vars-<< parameters.service_name >>
           command: |
@@ -92,7 +90,7 @@ commands:
             echo "DEPLOY Service: "<< parameters.service_name >>
             ls -l
             pwd
-            echo cat workspace/${SERVICE}.image
+            echo cat workspace/services-images
             echo "Entorno: " $ENV
 
 
