@@ -38,9 +38,9 @@ commands:
             if [[ $LATEST_COMMIT = $FOLDER_COMMIT ]];
             then
               echo "this folder ${SERVICE} was updated, add build code in this section"
-              echo "export TAG=333.ecr.aws:IMAGE-${SERVICE}-${ENV}" >> ${SERVICE}.IMAGE
-              cat ${SERVICE}.IMAGE >> $BASH_ENV
-              echo cat ${SERVICE}.IMAGE
+              echo "export TAG=333.ecr.aws:IMAGE-${SERVICE}-${ENV}" >> ${SERVICE}
+              cat ${SERVICE} >> $BASH_ENV
+              echo cat ${SERVICE}
             else
               echo "DO NOT BUILD"
             fi
@@ -79,7 +79,7 @@ commands:
       - attach_workspace:
           at: .
         #retrieving the current docker image tag value from the previous JOB
-      - run: cat cat ${SERVICE}.IMAGE >> $BASH_ENV && echo ${TAG:-NULL}
+      - run: cat ${SERVICE} >> $BASH_ENV && echo ${TAG:-NULL}
       - run:
           name: EXPORT-deploy-vars-<< parameters.service_name >>
           command: |
@@ -92,7 +92,7 @@ commands:
             echo "DEPLOY Service: "<< parameters.service_name >>
             ls -l
             pwd
-            echo cat ${SERVICE}.IMAGE
+            echo cat ${SERVICE}
             echo "Entorno: " $ENV
 
 
