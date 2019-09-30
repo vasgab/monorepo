@@ -38,8 +38,9 @@ commands:
             if [[ $LATEST_COMMIT = $FOLDER_COMMIT ]];
             then
               echo "this folder ${SERVICE} was updated, add build code in this section"
-              echo IMAGE-${SERVICE}=333.ecr.aws:IMAGE-${SERVICE} > workspace/${SERVICE}.IMAGE
-              echo cat /workspace/${SERVICE}.IMAGE
+              echo "export TAG=333.ecr.aws:IMAGE-${SERVICE}-${ENV}" >> ${SERVICE}.IMAGE
+              cat ${SERVICE}.IMAGE >> $BASH_ENV
+              echo cat cat ${SERVICE}.IMAGE
             else
               echo "DO NOT BUILD"
             fi
