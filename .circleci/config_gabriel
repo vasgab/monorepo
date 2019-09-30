@@ -1,0 +1,98 @@
+version: 2.1
+
+executors:
+  cloud-sdk:
+    docker:
+      - image: google/cloud-sdk
+
+commands:
+  build_and_deploy_service:
+    description: "Build and deploy service"
+    parameters:
+      folder_name:
+        type: string
+        default: "autenticacion"
+      env:
+        type: string
+        default: "dev"
+
+    steps:
+      - run:
+          name: Export env vars for substitution. $BASH_ENV is sourced before each step
+          command: |
+            echo 'export FOLDER="<< parameters.folder_name >>"' >> $BASH_ENV
+            echo 'export ENV="<< parameters.env >>"' >> $BASH_ENV
+            source $BASH_ENV
+      - run:
+          name: build
+          command: |
+            echo "folder " ${FOLDER}
+            echo "folder " ${ENV}
+            LATEST_COMMIT=$(git rev-parse HEAD)
+            FOLDER_COMMIT=$(git log -1 --format=format:%H --full-diff ${FOLDER})
+
+            echo "LATEST_COMMIT: " $LATEST_COMMIT
+            echo "FOLDER_COMMIT: " $FOLDER_COMMIT
+            if [[ $LATEST_COMMIT = $FOLDER_COMMIT ]];
+            then
+              echo "this folder ${FOLDER} was updated, add build code in this section"
+            else
+              echo "no need to deploy"
+            fi
+      - run:
+          name: deploy
+          command: |
+            echo "folder " ${FOLDER}
+            LATEST_COMMIT=$(git rev-parse HEAD)
+            FOLDER_COMMIT=$(git log -1 --format=format:%H --full-diff ${FOLDER})
+
+            echo "LATEST_COMMIT: " $LATEST_COMMIT
+            echo "FOLDER_COMMIT: " $FOLDER_COMMIT
+            if [[ $LATEST_COMMIT = $FOLDER_COMMIT ]];
+            then
+              echo "this folder ${FOLDER} was built, add deploy code in this section"
+            else
+              echo "no need to deploy"
+            fi
+
+jobs:
+  build-deploy-dev:
+    executor: cloud-sdk
+    steps:
+      - checkout
+      - build_and_deploy_service:
+          folder_name: "autenticacion"
+          env: "dev"
+      - build_and_deploy_service:
+          folder_name: "clientes"
+          env: "dev"
+      - build_and_deploy_service:
+          folder_name: "piscinas"
+          env: "dev"
+
+  build-deploy-master:
+    executor: cloud-sdk
+    steps:
+      - checkout
+      - build_and_deploy_service:
+          folder_name: "autenticacion"
+          env: "prod"
+      - build_and_deploy_service:
+          folder_name: "clientes"
+          env: "prod"
+      - build_and_deploy_service:
+          folder_name: "piscinas"
+          env: "prod"
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build-deploy-dev:
+          filters:
+            branches:
+              only: develop
+      - build-deploy-master:
+          filters:
+            branches:
+              only: master
