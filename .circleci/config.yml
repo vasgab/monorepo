@@ -36,9 +36,7 @@ commands:
             if [[ $LATEST_COMMIT = $FOLDER_COMMIT ]];
             then
               echo "this folder ${SERVICE} was updated, add build code in this section"
-              echo cat /workspace/services-images
-              docker build -tag
-              docker push
+              echo cat /workspace/${SERVICE}.IMAGE
               echo IMAGE-${SERVICE}=333.ecr.aws:IMAGE-${SERVICE} > workspace/${SERVICE}.IMAGE
             else
               echo "DO NOT BUILD"
