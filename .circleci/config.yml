@@ -110,7 +110,7 @@ jobs:
           env: "prod"
 
   deploy-service-master:
-    executor: aws-cli
+    executor: cloud-sdk
     steps:
       #- checkout
       - deploy:
