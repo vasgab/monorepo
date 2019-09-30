@@ -40,7 +40,7 @@ commands:
               echo "this folder ${SERVICE} was updated, add build code in this section"
               echo "export TAG=333.ecr.aws:IMAGE-${SERVICE}-${ENV}" >> ${SERVICE}.IMAGE
               cat ${SERVICE}.IMAGE >> $BASH_ENV
-              echo cat cat ${SERVICE}.IMAGE
+              echo cat ${SERVICE}.IMAGE
             else
               echo "DO NOT BUILD"
             fi
@@ -78,6 +78,8 @@ commands:
     steps:
       - attach_workspace:
           at: .
+        #retrieving the current docker image tag value from the previous JOB
+      - run: cat cat ${SERVICE}.IMAGE >> $BASH_ENV && echo ${TAG:-NULL}
       - run:
           name: EXPORT-deploy-vars-<< parameters.service_name >>
           command: |
@@ -90,7 +92,7 @@ commands:
             echo "DEPLOY Service: "<< parameters.service_name >>
             ls -l
             pwd
-            echo cat /workspace/services-images
+            echo cat ${SERVICE}.IMAGE
             echo "Entorno: " $ENV
 
 
