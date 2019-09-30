@@ -3,8 +3,7 @@ version: 2.1
 executors:
   cloud-sdk:
     docker:
-      - image: google/cloud-sdk
-    working_directory: /tmp
+      - image: google/cloud-sdk    
 
 commands:
   bds:
