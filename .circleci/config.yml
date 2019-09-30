@@ -4,12 +4,15 @@ executors:
   cloud-sdk:
     docker:
       - image: google/cloud-sdk
+  aws-cli:
+    docker:
+      - image: google/cloud-sdk
 
 commands:
-  build_and_deploy_service:
+  bds:
     description: "Build and deploy service"
     parameters:
-      folder_name:
+      service_name:
         type: string
         default: "autenticacion"
       env:
@@ -17,82 +20,144 @@ commands:
         default: "dev"
 
     steps:
+      - attach_workspace:
+          at: workspace/
       - run:
-          name: Export env vars for substitution. $BASH_ENV is sourced before each step
+          name: EXPORT-vars-<< parameters.service_name >>
           command: |
-            echo 'export FOLDER="<< parameters.folder_name >>"' >> $BASH_ENV
+            echo 'export SERVICE="<< parameters.service_name >>"' >> $BASH_ENV
             echo 'export ENV="<< parameters.env >>"' >> $BASH_ENV
             source $BASH_ENV
       - run:
-          name: build
+          name: BUILD-<< parameters.service_name >>
           command: |
-            echo "folder " ${FOLDER}
-            echo "folder " ${ENV}
+            echo "service " ${SERVICE}
+            echo "entorno " ${ENV}
             LATEST_COMMIT=$(git rev-parse HEAD)
-            FOLDER_COMMIT=$(git log -1 --format=format:%H --full-diff ${FOLDER})
+            FOLDER_COMMIT=$(git log -1 --format=format:%H --full-diff ${SERVICE})
 
             echo "LATEST_COMMIT: " $LATEST_COMMIT
             echo "FOLDER_COMMIT: " $FOLDER_COMMIT
             if [[ $LATEST_COMMIT = $FOLDER_COMMIT ]];
             then
-              echo "this folder ${FOLDER} was updated, add build code in this section"
+              echo "this folder ${SERVICE} was updated, add build code in this section"
+              echo IMAGE-${SERVICE}=333.ecr.aws:IMAGE-${SERVICE}> workspace/${SERVICE}.image
+              echo workspace/${SERVICE}.image
             else
-              echo "no need to deploy"
+              echo "DO NOT BUILD"
             fi
+      - persist_to_workspace:
+          root: .
+          paths:
+              - workspace/
+
+      # - run:
+      #     name: DEPLOY-<< parameters.service_name >>
+      #     command: |
+      #       echo "folder " ${SERVICE}
+      #       LATEST_COMMIT=$(git rev-parse HEAD)
+      #       FOLDER_COMMIT=$(git log -1 --format=format:%H --full-diff ${SERVICE})
+
+      #       echo "LATEST_COMMIT: " $LATEST_COMMIT
+      #       echo "FOLDER_COMMIT: " $FOLDER_COMMIT
+      #       if [[ $LATEST_COMMIT = $FOLDER_COMMIT ]];
+      #       then
+      #         echo "this service ${SERVICE} was built, add deploy code in this section"
+      #       else
+      #         echo "DO NOT DEPLOY"
+      #         sleep 5
+      #       fi
+
+  deploy:
+    description: "Deploy Service in K8S"
+    parameters:
+      service_name:
+        type: string
+        default: "autenticacion"
+      env:
+        type: string
+        default: "dev"
+    steps:
+      - attach_workspace:
+          at: workspace/
       - run:
-          name: deploy
+          name: EXPORT-vars-<< parameters.service_name >>
           command: |
-            echo "folder " ${FOLDER}
-            LATEST_COMMIT=$(git rev-parse HEAD)
-            FOLDER_COMMIT=$(git log -1 --format=format:%H --full-diff ${FOLDER})
+            echo 'export SERVICE="<< parameters.service_name >>"' >> $BASH_ENV
+            echo 'export ENV="<< parameters.env >>"' >> $BASH_ENV
+            source $BASH_ENV
+      - run:
+          name: DEPLOY-<< parameters.service_name >>
+          command: |
+            echo "DEPLOY Service: "<< parameters.service_name >>
+            ls -l
+            pwd
+            echo cat workspace/${SERVICE}.image
+            echo "Entorno: " $ENV
 
-            echo "LATEST_COMMIT: " $LATEST_COMMIT
-            echo "FOLDER_COMMIT: " $FOLDER_COMMIT
-            if [[ $LATEST_COMMIT = $FOLDER_COMMIT ]];
-            then
-              echo "this folder ${FOLDER} was built, add deploy code in this section"
-            else
-              echo "no need to deploy"
-            fi
+
 
 jobs:
-  build-deploy-dev:
-    executor: cloud-sdk
-    steps:
-      - checkout
-      - build_and_deploy_service:
-          folder_name: "autenticacion"
-          env: "dev"
-      - build_and_deploy_service:
-          folder_name: "clientes"
-          env: "dev"
-      - build_and_deploy_service:
-          folder_name: "piscinas"
-          env: "dev"
+  # build-deploy-dev:
+  #   executor: cloud-sdk
+  #   steps:
+  #     - checkout
+  #     - build_and_deploy_service:
+  #         folder_name: "autenticacion"
+  #         env: "dev"
+  #     - build_and_deploy_service:
+  #         folder_name: "clientes"
+  #         env: "dev"
+  #     - build_and_deploy_service:
+  #         folder_name: "piscinas"
+  #         env: "dev"
 
   build-deploy-master:
     executor: cloud-sdk
+    #parallelism: 2  (remove the comment to schedule steps in parallel - depends on the account plan!)
     steps:
       - checkout
-      - build_and_deploy_service:
-          folder_name: "autenticacion"
+      - bds:
+          service_name: "autenticacion"
           env: "prod"
-      - build_and_deploy_service:
-          folder_name: "clientes"
+      - bds:
+          service_name: "clientes"
           env: "prod"
-      - build_and_deploy_service:
-          folder_name: "piscinas"
+      - bds:
+          service_name: "piscinas"
           env: "prod"
+
+  deploy-service-master:
+    executor: aws-cli
+    steps:
+      #- checkout
+      - deploy:
+          service_name: "autenticacion"
+          env: "prod"
+      - deploy:
+          service_name: "clientes"
+          env: "prod"
+      - deploy:
+          service_name: "piscinas"
+          env: "prod"
+
+
 
 workflows:
   version: 2
   build-deploy:
     jobs:
-      - build-deploy-dev:
-          filters:
-            branches:
-              only: develop
+      # - build-deploy-dev:
+      #     filters:
+      #       branches:
+      #         only: develop
       - build-deploy-master:
           filters:
             branches:
-              only: master
+              only: develop
+      - deploy-service-master:
+          filters:
+            branches:
+              only: develop
+          requires:
+            - build-deploy-master
