@@ -1,7 +1,7 @@
 version: 2.1
 
 executors:
-  aws-cli:
+  cloud-sdk:
     docker:
       - image: google/cloud-sdk
     working_directory: /tmp
@@ -94,20 +94,6 @@ commands:
 
 
 jobs:
-  # build-deploy-dev:
-  #   executor: cloud-sdk
-  #   steps:
-  #     - checkout
-  #     - build_and_deploy_service:
-  #         folder_name: "autenticacion"
-  #         env: "dev"
-  #     - build_and_deploy_service:
-  #         folder_name: "clientes"
-  #         env: "dev"
-  #     - build_and_deploy_service:
-  #         folder_name: "piscinas"
-  #         env: "dev"
-
   build-deploy-master:
     executor: cloud-sdk
     #parallelism: 2  (remove the comment to schedule steps in parallel - depends on the account plan!)
@@ -143,10 +129,6 @@ workflows:
   version: 2
   build-deploy:
     jobs:
-      # - build-deploy-dev:
-      #     filters:
-      #       branches:
-      #         only: develop
       - build-deploy-master:
           filters:
             branches:
