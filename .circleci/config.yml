@@ -37,9 +37,8 @@ commands:
             if [[ $LATEST_COMMIT = $FOLDER_COMMIT ]];
             then
               echo "this folder ${SERVICE} was updated, add build code in this section"
-              echo "export TAG=333.ecr.aws:IMAGE-${SERVICE}-${ENV}" >> ${SERVICE}.txt
-              cat ${SERVICE}.txt >> $BASH_ENV
-              echo cat ${SERVICE}.txt
+              echo "333.ecr.aws:IMAGE-${SERVICE}-${ENV}" >> ${SERVICE}.txt              
+              cat ${SERVICE}.txt
             else
               echo "DO NOT BUILD"
             fi
@@ -69,12 +68,12 @@ commands:
       - run: 
           name: retrieving the current docker image tag value from the previous JOB
           command: |
-            FILE = $SERVICE.txt
-            echo 'export FILE="<< ${FILE} >>"' >> $BASH_ENV
-            echo cat "$FILE"
-            if [ -f "$FILE"]; then
-                echo "${FILE} exist"
-                echo cat ${FILE}.txt >> $BASH_ENV && echo ${TAG:-NULL} 
+            #FILE = $SERVICE.txt
+            #echo 'export FILE="<< ${FILE} >>"' >> $BASH_ENV
+            #echo cat "$FILE"
+            if [ -f "$SERVICE.txt"]; then
+                echo "$SERVICE.txt exist"
+                cat $SERVICE.txt                 
             fi
             
       - run:
