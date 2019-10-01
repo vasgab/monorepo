@@ -68,6 +68,8 @@ commands:
       - run: 
           name: retrieving the current docker image tag value from the previous JOB
           command: |
+            echo $SERVICE
+            echo $SERVICE.txt
             if [ -f "$SERVICE.txt"]; then
                 echo "$SERVICE.txt exist"
                 cat $SERVICE.txt                 
