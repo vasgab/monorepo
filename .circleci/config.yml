@@ -11,7 +11,7 @@ commands:
     parameters:
       service_name:
         type: string
-        default: "autenticacion"
+        default: "NONE"
       env:
         type: string
         default: "dev"
@@ -48,29 +48,12 @@ commands:
           paths:
               - .
 
-      # - run:
-      #     name: DEPLOY-<< parameters.service_name >>
-      #     command: |
-      #       echo "folder " ${SERVICE}
-      #       LATEST_COMMIT=$(git rev-parse HEAD)
-      #       FOLDER_COMMIT=$(git log -1 --format=format:%H --full-diff ${SERVICE})
-
-      #       echo "LATEST_COMMIT: " $LATEST_COMMIT
-      #       echo "FOLDER_COMMIT: " $FOLDER_COMMIT
-      #       if [[ $LATEST_COMMIT = $FOLDER_COMMIT ]];
-      #       then
-      #         echo "this service ${SERVICE} was built, add deploy code in this section"
-      #       else
-      #         echo "DO NOT DEPLOY"
-      #         sleep 5
-      #       fi
-
-  deploy:
+  deploy_service:
     description: "Deploy Service in K8S"
     parameters:
       service_name:
         type: string
-        default: "autenticacion"
+        default: "NONE"
       env:
         type: string
         default: "dev"
@@ -116,13 +99,13 @@ jobs:
     executor: cloud-sdk
     steps:
       - checkout
-      - deploy:
+      - deploy_service:
           service_name: "autenticacion"
           env: "prod"
-      - deploy:
+      - deploy_service:
           service_name: "clientes"
           env: "prod"
-      - deploy:
+      - deploy_service:
           service_name: "piscinas"
           env: "prod"
 
