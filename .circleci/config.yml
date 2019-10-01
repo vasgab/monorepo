@@ -69,7 +69,7 @@ commands:
       - run: 
           name: retrieving the current docker image tag value from the previous JOB
           command: |
-          FILE = $SERVICE.txt
+          FILE = hola.txt
           echo 'export FILE="<< ${FILE} >>"' >> $BASH_ENV
           echo cat "$FILE"
           if [ -f "$FILE"]; then
