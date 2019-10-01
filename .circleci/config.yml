@@ -70,6 +70,7 @@ commands:
           name: retrieving the current docker image tag value from the previous JOB
           command: |
           FILE=/${SERVICE}.txt
+          echo cat "$FILE"
           if test -f "$FILE"; then
               echo "$FILE exist"
               echo cat ${SERVICE}.txt >> $BASH_ENV && echo ${TAG:-NULL} 
