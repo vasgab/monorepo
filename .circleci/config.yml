@@ -32,7 +32,6 @@ commands:
             echo "entorno " ${ENV}
             LATEST_COMMIT=$(git rev-parse HEAD)
             FOLDER_COMMIT=$(git log -1 --format=format:%H --full-diff ${SERVICE})
-
             echo "LATEST_COMMIT: " $LATEST_COMMIT
             echo "FOLDER_COMMIT: " $FOLDER_COMMIT
             if [[ $LATEST_COMMIT = $FOLDER_COMMIT ]];
@@ -116,7 +115,7 @@ jobs:
   deploy-service-master:
     executor: cloud-sdk
     steps:
-      #- checkout
+      - checkout
       - deploy:
           service_name: "autenticacion"
           env: "prod"
