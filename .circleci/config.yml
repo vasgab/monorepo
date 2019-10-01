@@ -70,9 +70,8 @@ commands:
           command: |
             echo $SERVICE
             echo $SERVICE.txt
-            export FILE=${SERVICE}.txt
-            echo $FILE
-            if [[ -f $FILE ]]; then
+            
+            if [[ -f ${SERVICE}.txt ]]; then
                 echo "$SERVICE.txt exist"
                 cat $SERVICE.txt                 
             fi
