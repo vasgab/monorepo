@@ -72,9 +72,9 @@ commands:
           FILE=${SERVICE}.txt
           echo 'export FILE="<< ${FILE} >>"' >> $BASH_ENV
           echo cat "$FILE"
-          if test -f "$FILE"; then
-              echo "$FILE exist"
-              echo cat ${SERVICE}.txt >> $BASH_ENV && echo ${TAG:-NULL} 
+          if [ -f "$FILE"]; then
+              echo "${FILE} exist"
+              echo cat ${FILE}.txt >> $BASH_ENV && echo ${TAG:-NULL} 
           fi
             
       - run:
