@@ -70,7 +70,7 @@ commands:
           command: |
             echo $SERVICE
             echo $SERVICE.txt
-            if [ -f "$SERVICE.txt"]; then
+            if [[ -f ${SERVICE}.txt ]]; then
                 echo "$SERVICE.txt exist"
                 cat $SERVICE.txt                 
             fi
