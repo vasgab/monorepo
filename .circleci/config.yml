@@ -68,9 +68,6 @@ commands:
       - run: 
           name: retrieving the current docker image tag value from the previous JOB
           command: |
-            #FILE = $SERVICE.txt
-            #echo 'export FILE="<< ${FILE} >>"' >> $BASH_ENV
-            #echo cat "$FILE"
             if [ -f "$SERVICE.txt"]; then
                 echo "$SERVICE.txt exist"
                 cat $SERVICE.txt                 
