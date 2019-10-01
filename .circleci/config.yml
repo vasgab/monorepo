@@ -66,9 +66,9 @@ commands:
             echo 'export SERVICE="<< parameters.service_name >>"' >> $BASH_ENV
             echo 'export ENV="<< parameters.env >>"' >> $BASH_ENV
             source $BASH_ENV
-      - run: retrieving the current docker image tag value from the previous JOB
-          name: 
-          commmand: |
+      - run: 
+          name: retrieving the current docker image tag value from the previous JOB
+          command: |
           FILE=/${SERVICE}.txt
           if test -f "$FILE"; then
               echo "$FILE exist"
