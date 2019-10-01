@@ -69,13 +69,13 @@ commands:
       - run: 
           name: retrieving the current docker image tag value from the previous JOB
           command: |
-          FILE = hola.txt
-          echo 'export FILE="<< ${FILE} >>"' >> $BASH_ENV
-          echo cat "$FILE"
-          if [ -f "$FILE"]; then
-              echo "${FILE} exist"
-              echo cat ${FILE}.txt >> $BASH_ENV && echo ${TAG:-NULL} 
-          fi
+            FILE = ${SERVICE}.txt
+            echo 'export FILE="<< ${FILE} >>"' >> $BASH_ENV
+            echo cat "$FILE"
+            if [ -f "$FILE"]; then
+                echo "${FILE} exist"
+                echo cat ${FILE}.txt >> $BASH_ENV && echo ${TAG:-NULL} 
+            fi
             
       - run:
           name: DEPLOY-<< parameters.service_name >>
