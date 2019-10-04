@@ -131,15 +131,35 @@ jobs:
 
 workflows:
   version: 2
-  build-deploy:
+  build-deploy-dev:
     jobs:
-      - build-deploy-master:
-          filters:
-            branches:
-              only: develop
-      - deploy-service-master:
-          filters:
-            branches:
-              only: develop
+      - checkout
+      - build-services:
+        service_name: autenticacion
+      - build-services:
+        service_name: clientes
+      - build-services:
+        service_name: piscinas
+      - deploy-services:
           requires:
-            - build-deploy-master
+            - deploy-service
+          filters:
+            branch:
+              only:
+                - develop
+  build-deploy-qa:
+    jobs:
+      - checkout
+      - build-services:
+        service_name: autenticacion
+      - build-services:
+        service_name: clientes
+      - build-services:
+        service_name: piscinas
+      - deploy-services:
+          requires:
+            - deploy-service
+          filters:
+            branch:
+              only:
+                - qa
