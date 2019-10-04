@@ -73,7 +73,7 @@ commands:
 
             if [[ -f ${SERVICE}.txt ]]; then
                 echo "$SERVICE.txt exist"
-                cat $SERVICE.txt
+                cat ${SERVICE}.txt
             fi
 
       - run:
