@@ -11,7 +11,7 @@ commands:
     parameters:
       service_name:
         type: string
-        default: "autenticacion"
+        default: "NONE"
       env:
         type: string
         default: "dev"
@@ -32,15 +32,13 @@ commands:
             echo "entorno " ${ENV}
             LATEST_COMMIT=$(git rev-parse HEAD)
             FOLDER_COMMIT=$(git log -1 --format=format:%H --full-diff ${SERVICE})
-
             echo "LATEST_COMMIT: " $LATEST_COMMIT
             echo "FOLDER_COMMIT: " $FOLDER_COMMIT
             if [[ $LATEST_COMMIT = $FOLDER_COMMIT ]];
             then
               echo "this folder ${SERVICE} was updated, add build code in this section"
-              echo "export TAG=333.ecr.aws:IMAGE-${SERVICE}-${ENV}" >> ${SERVICE}
-              cat ${SERVICE} >> $BASH_ENV
-              echo cat ${SERVICE}
+              echo "333.ecr.aws:IMAGE-${SERVICE}-${ENV}" >> ${SERVICE}.txt
+              cat ${SERVICE}.txt
             else
               echo "DO NOT BUILD"
             fi
@@ -49,43 +47,35 @@ commands:
           paths:
               - .
 
-      # - run:
-      #     name: DEPLOY-<< parameters.service_name >>
-      #     command: |
-      #       echo "folder " ${SERVICE}
-      #       LATEST_COMMIT=$(git rev-parse HEAD)
-      #       FOLDER_COMMIT=$(git log -1 --format=format:%H --full-diff ${SERVICE})
-
-      #       echo "LATEST_COMMIT: " $LATEST_COMMIT
-      #       echo "FOLDER_COMMIT: " $FOLDER_COMMIT
-      #       if [[ $LATEST_COMMIT = $FOLDER_COMMIT ]];
-      #       then
-      #         echo "this service ${SERVICE} was built, add deploy code in this section"
-      #       else
-      #         echo "DO NOT DEPLOY"
-      #         sleep 5
-      #       fi
-
-  deploy:
+  deploy_service:
     description: "Deploy Service in K8S"
     parameters:
       service_name:
         type: string
-        default: "autenticacion"
+        default: "NONE"
       env:
         type: string
         default: "dev"
     steps:
       - attach_workspace:
           at: .
-        #retrieving the current docker image tag value from the previous JOB
-      - run: cat ${SERVICE} >> $BASH_ENV && echo ${TAG:-NULL}
       - run:
           name: EXPORT-deploy-vars-<< parameters.service_name >>
           command: |
             echo 'export SERVICE="<< parameters.service_name >>"' >> $BASH_ENV
             echo 'export ENV="<< parameters.env >>"' >> $BASH_ENV
             source $BASH_ENV
+      - run:
+          name: retrieving the current docker image tag value from the previous JOB
+          command: |
+            echo $SERVICE
+            echo $SERVICE.txt
+
+            if [[ -f ${SERVICE}.txt ]]; then
+                echo "$SERVICE.txt exist"
+                cat $SERVICE.txt
+            fi
+
       - run:
           name: DEPLOY-<< parameters.service_name >>
           command: |
@@ -116,14 +106,14 @@ jobs:
   deploy-service-master:
     executor: cloud-sdk
     steps:
-      #- checkout
-      - deploy:
+      - checkout
+      - deploy_service:
           service_name: "autenticacion"
           env: "prod"
-      - deploy:
+      - deploy_service:
           service_name: "clientes"
           env: "prod"
-      - deploy:
+      - deploy_service:
           service_name: "piscinas"
           env: "prod"
 
@@ -131,35 +121,15 @@ jobs:
 
 workflows:
   version: 2
-  build-deploy-dev:
+  build-deploy:
     jobs:
-      - checkout
-      - build-services:
-        service_name: autenticacion
-      - build-services:
-        service_name: clientes
-      - build-services:
-        service_name: piscinas
-      - deploy-services:
-          requires:
-            - deploy-service
+      - build-deploy-master:
           filters:
-            branch:
-              only:
-                - develop
-  build-deploy-qa:
-    jobs:
-      - checkout
-      - build-services:
-        service_name: autenticacion
-      - build-services:
-        service_name: clientes
-      - build-services:
-        service_name: piscinas
-      - deploy-services:
-          requires:
-            - deploy-service
+            branches:
+              only: develop
+      - deploy-service-master:
           filters:
-            branch:
-              only:
-                - qa
+            branches:
+              only: develop
+          requires:
+            - build-deploy-master
